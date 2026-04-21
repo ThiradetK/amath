@@ -18,6 +18,11 @@ export function useWebSocket() {
   );
 
   useEffect(() => {
+    if (!WS_URL) {
+      console.error("NEXT_PUBLIC_WS_URL is not defined");
+      return;
+    }
+
     const ws = new WebSocket(WS_URL);
     wsRef.current = ws;
 
@@ -44,7 +49,7 @@ export function useWebSocket() {
     };
 
     return () => ws.close();
-  }, []);
+  }, [handleServerMessage, send]);
 
   return { send };
 }
