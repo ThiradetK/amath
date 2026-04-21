@@ -74,7 +74,7 @@ interface GameStore {
   selectedRackIndex: number | null;
   selectedPlacedIndex: number | null;
   placedThisTurn: { tile: Tile; row: number; col: number }[];
-  localBoard: Cell[][] | null;
+  localBoard: Cell[][];
   message: string;
   exchangeMode: boolean;
   exchangeSelected: number[];
@@ -112,7 +112,7 @@ export const useGameStore = create<GameStore>((set, get) => {
   // ✅ Helper: ตรวจสอบ placement และสร้าง invalidCells
   const validateAndSetInvalid = (
     placedThisTurn: { tile: Tile; row: number; col: number }[],
-    localBoard: Cell[][] | null,
+    localBoard: Cell[][],
   ) => {
     if (!localBoard || placedThisTurn.length === 0) {
       return new Set<string>();
@@ -191,7 +191,7 @@ export const useGameStore = create<GameStore>((set, get) => {
     selectedRackIndex: null,
     selectedPlacedIndex: null,
     placedThisTurn: [],
-    localBoard: null,
+    localBoard: [],
     message: "",
     exchangeMode: false,
     exchangeSelected: [],
@@ -223,7 +223,7 @@ export const useGameStore = create<GameStore>((set, get) => {
             serverState: state,
             localBoard: state.board
               ? state.board.map((r) => r.map((c) => ({ ...c })))
-              : null,
+              : [],
             screen: state.gamePhase === "playing" ? "game" : "room",
             placedThisTurn: [],
             selectedTile: null,
@@ -232,6 +232,7 @@ export const useGameStore = create<GameStore>((set, get) => {
           });
           break;
         }
+
         case "STATE_UPDATE": {
           const state = msg.state as ServerState;
           const {
@@ -239,17 +240,26 @@ export const useGameStore = create<GameStore>((set, get) => {
             myPlayerId: me,
             serverState: oldState,
           } = get();
-          const localBoard = state.board
-            ? state.board.map((r) => r.map((c) => ({ ...c })))
-            : null;
-          // Check if it's now my turn — clear placedThisTurn if server advanced turn
+
+          // 🔥 บังคับให้มี board เท่านั้น
+          if (!state.board) {
+            console.error("STATE_UPDATE without board");
+            return;
+          }
+
+          const localBoard: Cell[][] = state.board.map((r) =>
+            r.map((c) => ({ ...c })),
+          );
+
           const myPlayer = state.players.find((p) => p.id === me);
           const isMyTurn = state.players[state.currentPlayerIndex]?.id === me;
-          // Only reset timer if turn actually changed (currentPlayerIndex changed)
+
           const turnChanged =
             oldState?.currentPlayerIndex !== state.currentPlayerIndex;
-          // If server changed, clear local placements
+
           const newPlaced = isMyTurn ? placedThisTurn : [];
+
+          // ✅ ตอนนี้ TS มั่นใจว่า localBoard ไม่ null แล้ว
           for (const p of newPlaced) {
             localBoard[p.row][p.col] = {
               ...localBoard[p.row][p.col],
@@ -257,12 +267,13 @@ export const useGameStore = create<GameStore>((set, get) => {
               isNew: true,
             };
           }
+
           set({
             serverState: state,
             localBoard,
             placedThisTurn: newPlaced,
-            invalidCells: new Set(), // Clear invalid cells on state update
-            turnTimeLeft: turnChanged && isMyTurn ? 180 : get().turnTimeLeft, // Reset timer only if turn changed
+            invalidCells: new Set(),
+            turnTimeLeft: turnChanged && isMyTurn ? 180 : get().turnTimeLeft,
             screen:
               state.gamePhase === "ended"
                 ? "game"
@@ -580,7 +591,7 @@ export const useGameStore = create<GameStore>((set, get) => {
         serverState: null,
         myPlayerId: null,
         placedThisTurn: [],
-        localBoard: null,
+        localBoard: [],
         chatMessages: [],
         message: "",
       });
