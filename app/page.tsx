@@ -182,7 +182,7 @@ export default function Home() {
             <h3 className="text-white/25 text-xs uppercase tracking-widest font-bold mb-1.5">
               💬 แชท
             </h3>
-            <div style={{ height: "140px" }}>
+            <div style={{ height: "100px" }}>
               <ChatBox />
             </div>
           </div>
