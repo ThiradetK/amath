@@ -36,7 +36,7 @@ export default function Home() {
 
   return (
     <div
-      className="min-h-screen bg-[#0a0500] text-white flex flex-col"
+      className="bg-[#0a0500] text-white flex flex-col h-dvh"
       style={{ fontFamily: "system-ui, sans-serif" }}
     >
       <GameEndOverlay />
@@ -81,9 +81,9 @@ export default function Home() {
         </div>
       </header>
 
-      <div className="flex-1 flex flex-col md:flex-row h-[calc(100vh-49px)] overflow-hidden">
-        {/* Left: Board (grow เต็มที่) */}
-        <div className="flex-1 flex items-center justify-center bg-[#0a0500] min-h-0 min-w-0">
+      <div className="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0">
+        {/* Left: Board */}
+        <div className="md:flex-1 flex items-center justify-center bg-[#0a0500] min-h-0 min-w-0 w-full">
           <GameBoard />
         </div>
 
@@ -132,10 +132,10 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Mobile: Stack all (Scores, Rack, Timer, Controls, History, Chat) */}
-        <div className="md:hidden flex-1 flex flex-col overflow-hidden">
+        {/* Mobile: board on top (fixed), controls scroll below */}
+        <div className="md:hidden flex flex-col overflow-hidden min-h-0 flex-1">
           {/* Mobile scores */}
-          <div className="border-b border-amber-900/30 p-2 flex-shrink-0">
+          <div className="border-b border-amber-900/30 px-2 py-1 flex-shrink-0">
             <div className="flex gap-1.5 overflow-x-auto">
               {serverState?.players.map((p, i) => (
                 <div
@@ -151,7 +151,10 @@ export default function Home() {
           </div>
 
           {/* Mobile content scroll */}
-          <div className="flex-1 flex flex-col p-3 gap-3 overflow-y-auto min-h-0">
+          <div
+            className="flex-shrink flex flex-col p-3 gap-3 overflow-y-auto"
+            style={{ maxHeight: "55vh" }}
+          >
             <div className="flex-shrink-0">
               <PlayerRack />
             </div>
@@ -169,13 +172,18 @@ export default function Home() {
                 <MoveHistory />
               </div>
             </div>
-            <div className="flex-1 min-h-0 border-t border-white/10 pt-3 flex flex-col">
-              <h3 className="text-white/25 text-xs uppercase tracking-widest font-bold mb-2 flex-shrink-0">
-                💬 แชท
-              </h3>
-              <div className="flex-1 min-h-0">
-                <ChatBox />
-              </div>
+          </div>
+
+          {/* Mobile Chat — แยกออกมาอยู่ล่างสุด มี height ชัดเจน */}
+          <div
+            className="flex-shrink-0 border-t border-white/10 px-3 pb-3 pt-2"
+            style={{ height: "180px" }}
+          >
+            <h3 className="text-white/25 text-xs uppercase tracking-widest font-bold mb-1.5">
+              💬 แชท
+            </h3>
+            <div style={{ height: "140px" }}>
+              <ChatBox />
             </div>
           </div>
         </div>
