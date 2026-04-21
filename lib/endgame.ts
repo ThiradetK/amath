@@ -29,21 +29,21 @@ export interface EndgamePlayer {
   name: string;
   score: number;
   rack: Tile[];
-  rackPenalty?: number;   // set by finaliseGame
+  rackPenalty?: number; // set by finaliseGame
   emptyHandBonus?: number; // set by finaliseGame
-  finalScore?: number;    // set by finaliseGame
+  finalScore?: number; // set by finaliseGame
 }
 
 export type GameEndReason =
-  | "EMPTY_HAND"      // Case A — someone emptied their rack after bag ran out
-  | "ALL_PASS"        // Case B — consecutive pass threshold hit
-  | "TIMEOUT_STALL"   // Case C — every player timed out repeatedly
-  | "DISCONNECT";     // Case D — forced end due to disconnection
+  | "EMPTY_HAND" // Case A — someone emptied their rack after bag ran out
+  | "ALL_PASS" // Case B — consecutive pass threshold hit
+  | "TIMEOUT_STALL" // Case C — every player timed out repeatedly
+  | "DISCONNECT"; // Case D — forced end due to disconnection
 
 export interface EndgameResult {
   reason: GameEndReason;
-  players: EndgamePlayer[];   // with final scores computed
-  winners: EndgamePlayer[];   // all players with top score (tie support)
+  players: EndgamePlayer[]; // with final scores computed
+  winners: EndgamePlayer[]; // all players with top score (tie support)
   primaryWinner: EndgamePlayer; // first among winners (for simple display)
 }
 
@@ -87,7 +87,7 @@ export function checkGameEnd(input: EndgameCheckInput): GameEndReason | null {
   // twice and immediately ends the game.
   const passThreshold = Math.max(
     connectedPlayerCount * 2,
-    totalPlayerCount * 2
+    totalPlayerCount * 2,
   );
   if (consecutivePasses >= passThreshold) return "ALL_PASS";
 
@@ -110,7 +110,7 @@ export function checkGameEnd(input: EndgameCheckInput): GameEndReason | null {
  */
 export function finaliseGame(
   players: EndgamePlayer[],
-  reason: GameEndReason
+  reason: GameEndReason,
 ): EndgameResult {
   // Deep-clone so we don't mutate caller's state
   const finalPlayers: EndgamePlayer[] = players.map((p) => ({
@@ -168,7 +168,7 @@ export type MoveType = "place" | "pass" | "exchange" | "timeout" | "disconnect";
  */
 export function updateConsecutivePasses(
   current: number,
-  moveType: MoveType
+  moveType: MoveType,
 ): number {
   return moveType === "place" ? 0 : current + 1;
 }
