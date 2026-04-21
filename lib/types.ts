@@ -1,17 +1,43 @@
-export type TileValue = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' |
-  '10' | '11' | '12' | '13' | '14' | '15' | '16' | '17' | '18' | '19' | '20' |
-  '+' | '-' | '×' | '÷' | '=' | 'BLANK';
+export type TileValue =
+  | "0"
+  | "1"
+  | "2"
+  | "3"
+  | "4"
+  | "5"
+  | "6"
+  | "7"
+  | "8"
+  | "9"
+  | "10"
+  | "11"
+  | "12"
+  | "13"
+  | "14"
+  | "15"
+  | "16"
+  | "17"
+  | "18"
+  | "19"
+  | "20"
+  | "+"
+  | "-"
+  | "×"
+  | "÷"
+  | "="
+  | "BLANK";
 
 export type CellType =
-  | 'NORMAL'
-  | 'TRIPLE_EQ'    // Triple Equation (red)
-  | 'DOUBLE_EQ'    // Double Equation (yellow)
-  | 'TRIPLE_NUM'   // Triple Number (blue)
-  | 'DOUBLE_NUM'   // Double Number (orange)
-  | 'STAR';        // Center star
+  | "NORMAL"
+  | "TRIPLE_EQ" // Triple Equation (red)
+  | "DOUBLE_EQ" // Double Equation (yellow)
+  | "TRIPLE_NUM" // Triple Number (blue)
+  | "DOUBLE_NUM" // Double Number (orange)
+  | "STAR"; // Center star
 
 export interface Tile {
-  id: string;
+  id: string; // React key (อาจถูก suffix หลัง recall)
+  originalId: string; // ID จริงที่ server รู้จัก — ใช้ตอน COMMIT_MOVE
   value: TileValue;
   displayValue: string;
   points: number;
@@ -44,7 +70,7 @@ export interface PlacedTile {
 export interface MoveRecord {
   playerName: string;
   playerId: number;
-  type: 'place' | 'pass' | 'exchange';
+  type: "place" | "pass" | "exchange";
   score: number;
   equations: string[];
   turnNumber: number;
@@ -57,7 +83,7 @@ export interface GameState {
   currentPlayerIndex: number;
   tileBag: Tile[];
   placedThisTurn: PlacedTile[];
-  gamePhase: 'setup' | 'playing' | 'ended';
+  gamePhase: "setup" | "playing" | "ended";
   selectedTile: Tile | null;
   selectedRackIndex: number | null;
   message: string;

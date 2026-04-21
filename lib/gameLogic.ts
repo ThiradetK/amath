@@ -7,8 +7,10 @@ export function createTileBag(): Tile[] {
   const bag: Tile[] = [];
   for (const [value, [count, points]] of Object.entries(TILE_DISTRIBUTION)) {
     for (let i = 0; i < count; i++) {
+      const tileId = `tile-${tileCounter++}`;
       bag.push({
-        id: `tile-${tileCounter++}`,
+        id: tileId,
+        originalId: tileId, // ✅ เก็บ original ID แยกต่างหาก
         value: value as TileValue,
         displayValue: value === "BLANK" ? "" : value,
         points,

@@ -82,12 +82,14 @@ export function checkGameEnd(input: EndgameCheckInput): GameEndReason | null {
   if (allEmptied) return "EMPTY_HAND";
 
   // Case B / C: consecutive-pass threshold
-  // Threshold = max(connectedPlayers * 2, totalPlayers * 2)
+  // Threshold = max(connectedPlayers * 3, totalPlayers * 3)
   // Using total prevents the edge-case where 1 connected player passes
   // twice and immediately ends the game.
+
+  const PASS_ROUNDS: number = 3;
   const passThreshold = Math.max(
-    connectedPlayerCount * 2,
-    totalPlayerCount * 2,
+    connectedPlayerCount * PASS_ROUNDS,
+    totalPlayerCount * PASS_ROUNDS,
   );
   if (consecutivePasses >= passThreshold) return "ALL_PASS";
 

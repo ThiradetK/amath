@@ -415,17 +415,22 @@ export const useGameStore = create<GameStore>((set, get) => {
       const myPlayer = serverState.players.find((p) => p.id === myPlayerId);
       // Reset blank tile to original blank state when recalling
       // Always assign a new id to avoid duplicate keys in React
+      // ✅ ใช้ suffix เฉพาะเป็น React key เพื่อ force re-render
+      //    originalId ยังคงเป็น server ID เดิม ไม่เปลี่ยน
+      const suffix = "-r" + Math.random().toString(36).slice(2, 7);
       const recalledTile = placed.tile.isBlank
         ? {
             ...placed.tile,
             value: "BLANK" as const,
             displayValue: "?",
             blankValue: undefined,
-            id: placed.tile.id + "-r" + Math.random().toString(36).slice(2, 7),
+            id: placed.tile.id + suffix,
+            originalId: placed.tile.originalId,
           }
         : {
             ...placed.tile,
-            id: placed.tile.id + "-r" + Math.random().toString(36).slice(2, 7),
+            id: placed.tile.id + suffix,
+            originalId: placed.tile.originalId,
           };
       const newRack = [...(myPlayer?.rack || []), recalledTile];
       const newPlaced = placedThisTurn.filter(
@@ -454,20 +459,23 @@ export const useGameStore = create<GameStore>((set, get) => {
       const myPlayer = serverState.players.find((p) => p.id === myPlayerId);
       // Reset blank tiles to original blank state when recalling all
       // Always assign a new id to avoid duplicate keys in React
-      const resetTiles = placedThisTurn.map((p) =>
-        p.tile.isBlank
+      const resetTiles = placedThisTurn.map((p) => {
+        const suffix = "-r" + Math.random().toString(36).slice(2, 7);
+        return p.tile.isBlank
           ? {
               ...p.tile,
               value: "BLANK" as const,
               displayValue: "?",
               blankValue: undefined,
-              id: p.tile.id + "-r" + Math.random().toString(36).slice(2, 7),
+              id: p.tile.id + suffix,
+              originalId: p.tile.originalId,
             }
           : {
               ...p.tile,
-              id: p.tile.id + "-r" + Math.random().toString(36).slice(2, 7),
-            },
-      );
+              id: p.tile.id + suffix,
+              originalId: p.tile.originalId,
+            };
+      });
       const newRack = [...(myPlayer?.rack || []), ...resetTiles];
       const newBoard = serverState.board.map((r) => r.map((c) => ({ ...c })));
       set({
@@ -518,8 +526,16 @@ export const useGameStore = create<GameStore>((set, get) => {
         return;
       }
 
-      // ✅ Valid: send to server
-      sendFn?.("COMMIT_MOVE", { placed: placedThisTurn });
+      // ✅ Valid: normalize tile IDs กลับเป็น originalId ก่อนส่ง server
+      // เพราะ recall จะ suffix id ด้วย "-rXXX" แต่ server รู้จักแค่ originalId
+      const normalizedPlaced = placedThisTurn.map((p) => ({
+        ...p,
+        tile: {
+          ...p.tile,
+          id: p.tile.originalId, // restore original server ID
+        },
+      }));
+      sendFn?.("COMMIT_MOVE", { placed: normalizedPlaced });
     },
 
     passMove: () => {
