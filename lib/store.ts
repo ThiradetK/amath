@@ -242,15 +242,10 @@ export const useGameStore = create<GameStore>((set, get) => {
             serverState: oldState,
           } = get();
 
-          // 🔥 บังคับให้มี board เท่านั้น
-          if (!state.board) {
-            console.error("STATE_UPDATE without board");
-            return;
-          }
-
-          const localBoard: Cell[][] = state.board.map((r) =>
-            r.map((c) => ({ ...c })),
-          );
+          // board อาจเป็น null ตอน waiting phase — handle ได้ปกติ
+          const localBoard: Cell[][] = state.board
+            ? state.board.map((r) => r.map((c) => ({ ...c })))
+            : (get().localBoard ?? []);
 
           const myPlayer = state.players.find((p) => p.id === me);
           const isMyTurn = state.players[state.currentPlayerIndex]?.id === me;
