@@ -36,6 +36,7 @@ export interface ServerState {
   turnNumber: number;
   tileBagCount: number;
   winner: { id: string; name: string; score: number } | null;
+  hostPlayerId: string | null;
   winners: { id: string; name: string; score: number }[];
   gameEndReason:
     | "EMPTY_HAND"
@@ -270,6 +271,7 @@ export const useGameStore = create<GameStore>((set, get) => {
 
           set({
             serverState: state,
+            isHost: state.hostPlayerId === me, // ✅ sync ทุก STATE_UPDATE
             localBoard,
             placedThisTurn: newPlaced,
             invalidCells: new Set(),
