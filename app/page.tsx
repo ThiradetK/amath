@@ -132,59 +132,63 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Mobile: board on top (fixed), controls scroll below */}
-        <div className="md:hidden flex flex-col overflow-hidden min-h-0 flex-1">
-          {/* Mobile scores */}
-          <div className="border-b border-amber-900/30 px-2 py-1 flex-shrink-0">
+        {/* Mobile: board บนสุด + controls scroll ด้านล่าง */}
+        <div className="md:hidden flex flex-col min-h-0 flex-1 overflow-hidden">
+          {/* Scorebar */}
+          <div className="flex-shrink-0 border-b border-amber-900/30 px-2 py-1">
             <div className="flex gap-1.5 overflow-x-auto">
               {serverState?.players.map((p, i) => (
                 <div
                   key={p.id}
-                  className={`flex-shrink-0 text-center px-2 py-1 rounded-lg border text-[10px]
-                  ${i === serverState.currentPlayerIndex ? "bg-amber-500/20 border-amber-500 text-amber-300" : "bg-white/5 border-white/10 text-white/40"}`}
+                  className={`flex-shrink-0 text-center px-2.5 py-1 rounded-lg border text-xs
+                    ${
+                      i === serverState.currentPlayerIndex
+                        ? "bg-amber-500/20 border-amber-500 text-amber-300"
+                        : "bg-white/5 border-white/10 text-white/40"
+                    }`}
                 >
                   <div className="font-bold text-[10px]">{p.name}</div>
-                  <div className="font-black text-[14px]">{p.score}</div>
+                  <div className="font-black text-sm">{p.score}</div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Mobile content scroll */}
-          <div
-            className="flex-shrink flex flex-col p-3 gap-3 overflow-y-auto"
-            style={{ maxHeight: "55vh" }}
-          >
+          {/* Scrollable controls — fills remaining space */}
+          <div className="flex-1 overflow-y-auto min-h-0 flex flex-col gap-2 p-3">
+            {/* Rack */}
             <div className="flex-shrink-0">
               <PlayerRack />
             </div>
+
+            {/* Timer */}
             <div className="flex-shrink-0">
               <TurnTimer />
             </div>
+
+            {/* Controls */}
             <div className="flex-shrink-0">
               <GameControls />
             </div>
-            <div className="flex-shrink-0">
-              <div className="border-t border-white/10 pt-3">
-                <h3 className="text-white/25 text-xs uppercase tracking-widest font-bold mb-2">
-                  ประวัติ
-                </h3>
-                <MoveHistory />
+
+            {/* History */}
+            <div className="flex-shrink-0 border-t border-white/10 pt-2">
+              <h3 className="text-white/25 text-xs uppercase tracking-widest font-bold mb-1">
+                ประวัติ
+              </h3>
+              <MoveHistory />
+            </div>
+
+            {/* Chat */}
+            <div className="flex-shrink-0 border-t border-white/10 pt-2">
+              <h3 className="text-white/25 text-xs uppercase tracking-widest font-bold mb-1">
+                💬 แชท
+              </h3>
+              <div className="flex flex-col" style={{ height: "200px" }}>
+                <ChatBox />
               </div>
             </div>
-          </div>
-
-          {/* Mobile Chat — แยกออกมาอยู่ล่างสุด มี height ชัดเจน */}
-          <div
-            className="flex-shrink-0 border-t border-white/10 px-3 pb-3 pt-2"
-            style={{ height: "120px" }}
-          >
-            <h3 className="text-white/25 text-xs uppercase tracking-widest font-bold mb-1.5">
-              💬 แชท
-            </h3>
-            <div style={{ height: "100px" }}>
-              <ChatBox />
-            </div>
+            <div className="flex-shrink-0 h-4" />
           </div>
         </div>
       </div>
