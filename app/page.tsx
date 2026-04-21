@@ -140,11 +140,11 @@ export default function Home() {
               {serverState?.players.map((p, i) => (
                 <div
                   key={p.id}
-                  className={`flex-shrink-0 text-center px-2.5 py-1.5 rounded-lg border text-xs
+                  className={`flex-shrink-0 text-center px-2 py-1 rounded-lg border text-[10px]
                   ${i === serverState.currentPlayerIndex ? "bg-amber-500/20 border-amber-500 text-amber-300" : "bg-white/5 border-white/10 text-white/40"}`}
                 >
                   <div className="font-bold text-[10px]">{p.name}</div>
-                  <div className="font-black text-base">{p.score}</div>
+                  <div className="font-black text-[14px]">{p.score}</div>
                 </div>
               ))}
             </div>
@@ -177,7 +177,7 @@ export default function Home() {
           {/* Mobile Chat — แยกออกมาอยู่ล่างสุด มี height ชัดเจน */}
           <div
             className="flex-shrink-0 border-t border-white/10 px-3 pb-3 pt-2"
-            style={{ height: "180px" }}
+            style={{ height: "120px" }}
           >
             <h3 className="text-white/25 text-xs uppercase tracking-widest font-bold mb-1.5">
               💬 แชท
